@@ -4,5 +4,5 @@ import lombok.AllArgsConstructor;
 
 
 @AllArgsConstructor
-public class UserDetails implements UserDetails {
+public class UserDetails /*implements UserDetails*/ {
 }

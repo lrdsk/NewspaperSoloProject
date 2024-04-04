@@ -5,14 +5,15 @@ import org.example.servicesImpl.UserServiceImpl;
 import org.example.util.UserMapper;
 import org.example.util.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserController {
     private final UserServiceImpl userService;
     private final UserMapper userMapper;
@@ -25,8 +26,23 @@ public class UserController {
         this.userValidator = userValidator;
     }
 
-    @GetMapping("/users")
+    @GetMapping()
     public List<UserDTO> index(){
         return userService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public UserDTO getOne(@PathVariable("id") int id){
+        UserDTO userDTO = null;
+        if(userService.findById(id).isPresent())
+            userDTO = userService.findById(id).get();
+
+        return userDTO;
+    }
+
+    @DeleteMapping("/{id}")
+    public HttpEntity<HttpStatus> deleteOne(@PathVariable("id") int id){
+        userService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

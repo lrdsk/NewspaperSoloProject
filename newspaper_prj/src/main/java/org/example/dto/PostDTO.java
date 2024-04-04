@@ -13,6 +13,9 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostDTO {
+    @NotEmpty(message = "Place for photo should be not empty")
+    private String photo;
+
     @NotEmpty(message = "Title should be not empty")
     @Size(max=255)
     private String title;

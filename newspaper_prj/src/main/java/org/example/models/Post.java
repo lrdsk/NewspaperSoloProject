@@ -19,6 +19,10 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int postId;
 
+    @Column(name="photo")
+    @NotEmpty(message = "Place for photo should be not empty")
+    private String photo;
+
     @Column(name="title")
     @NotEmpty(message = "Title should be not empty")
     @Size(max=255)

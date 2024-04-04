@@ -3,6 +3,8 @@ package org.example.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
@@ -11,13 +13,13 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostDTO {
-    @NotNull
+    @NotEmpty(message = "Title should be not empty")
     @Size(max=255)
     private String title;
 
-    @NotNull
+    @NotEmpty(message = "Information should be not empty")
     private String information;
 
-    @NotNull
+    @NotEmpty(message = "Date should be not empty")
     private Timestamp datePublish;
 }

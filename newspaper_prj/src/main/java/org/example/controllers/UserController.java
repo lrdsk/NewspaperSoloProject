@@ -1,14 +1,22 @@
 package org.example.controllers;
 
 import org.example.dto.UserDTO;
+import org.example.security.CustomUserDetails;
+import org.example.servicesImpl.LikeServiceImpl;
 import org.example.servicesImpl.UserServiceImpl;
+import org.example.util.errorResponses.ErrorResponse;
+import org.example.util.exceptions.PostNotFoundException;
+import org.example.util.exceptions.UserNotFoundException;
 import org.example.util.mappers.UserMapper;
 import org.example.util.validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import sun.security.timestamp.HttpTimestamper;
 
 import java.util.List;
 
@@ -32,17 +40,18 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDTO getOne(@PathVariable("id") int id){ //todo: реализовать выброс исключений и его последующую обработку
-        UserDTO userDTO = null;
-        if(userService.findById(id).isPresent())
-            userDTO = userService.findById(id).get();
-
-        return userDTO;
+    public UserDTO getOne(@PathVariable("id") int id){
+        return userService.findById(id);
     }
 
     @DeleteMapping("/{id}")
-    public HttpEntity<HttpStatus> deleteOne(@PathVariable("id") int id){ //todo: добавить проверку нашелся ли такой юзер по данному id
-        userService.deleteById(id);
+    public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") int id){
+        UserDTO userDTO = userService.findById(id);
+
+        if(userDTO != null)
+            userService.deleteById(id);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

@@ -39,7 +39,6 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     @Autowired
-
     public AuthController(RegistrationServiceImpl registrationService, UserValidator userValidator, JWTUtil jwtUtil, UserMapper userMapper, AuthenticationManager authenticationManager) {
         this.registrationService = registrationService;
         this.userValidator = userValidator;
@@ -64,7 +63,7 @@ public class AuthController {
         return new ResponseEntity<>(Collections.singletonMap("jwt-token", token), HttpStatus.OK);
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<Map<String, String>> performLogin(@RequestBody @Valid AuthDTO authDTO,
                                                BindingResult bindingResult){
         if(bindingResult.hasErrors()){
@@ -91,25 +90,6 @@ public class AuthController {
         System.out.println(authentication.getPrincipal().getClass());
 
         return userDetails.getUsername();
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(AuthFormIncorrectException authFormNotCorrectException){
-        ErrorResponse response = new ErrorResponse(
-                authFormNotCorrectException.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(UserIncorrectException userIncorrectException){
-        ErrorResponse response = new ErrorResponse(
-                userIncorrectException.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     private String createErrorMessage(BindingResult bindingResult){

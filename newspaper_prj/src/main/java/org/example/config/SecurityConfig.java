@@ -44,7 +44,7 @@ public class SecurityConfig{
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/users", "/api/auth/registration", "/api/post").permitAll()
-                .antMatchers("/photo/1").authenticated()
+                .antMatchers("/photo/1", "/api/users/like/{id}/like").authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

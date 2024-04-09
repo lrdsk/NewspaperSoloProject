@@ -1,6 +1,8 @@
 package org.example.controllers;
 
 import org.example.dto.PostDTO;
+import org.example.security.CustomUserDetails;
+import org.example.servicesImpl.LikeServiceImpl;
 import org.example.servicesImpl.PostServiceImpl;
 import org.example.util.errorResponses.ErrorResponse;
 import org.example.util.exceptions.PostNotCreatedException;
@@ -10,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +25,14 @@ import java.util.List;
 @RequestMapping("/api/post")
 public class PostController {
     private final PostServiceImpl postService;
+    private final LikeServiceImpl likeService;
 
     private final PostMapper postMapper;
 
     @Autowired
-    public PostController(PostServiceImpl postService, PostMapper postMapper) {
+    public PostController(PostServiceImpl postService, LikeServiceImpl likeService, PostMapper postMapper) {
         this.postService = postService;
+        this.likeService = likeService;
         this.postMapper = postMapper;
     }
 
@@ -44,7 +50,14 @@ public class PostController {
     public PostDTO getOne(@PathVariable("id") int id){
         return  postService.findOne(id);
     }
-
+    @GetMapping("/{id}/like")
+    public HttpEntity<HttpStatus> setLikeToPost(@PathVariable("id") int postId){ //todo: нужно реализовать отмену like и check if the post is worth liking
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        likeService.setLikeToPost(userDetails.getUsername(), postId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    //todo: добавить возможность получить количество лайков на посте
     @PostMapping()
     public HttpEntity<HttpStatus> addPost(@RequestBody @Valid PostDTO postDTO, BindingResult bindingResult){
 
@@ -63,25 +76,6 @@ public class PostController {
             postService.deleteOne(id);
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(PostNotFoundException postNotFoundException){
-        ErrorResponse response = new ErrorResponse(
-                "Post with this id wasn't found",
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
-    @ExceptionHandler
-    private ResponseEntity<ErrorResponse> handleException(PostNotCreatedException postNotCreatedException){
-        ErrorResponse response = new ErrorResponse(
-                postNotCreatedException.getMessage(),
-                System.currentTimeMillis()
-        );
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     private String createErrorMessage(BindingResult bindingResult){

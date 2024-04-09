@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -37,4 +38,12 @@ public class Post {
     //@NotEmpty(message = "Date should be not empty")
     @Temporal(TemporalType.TIMESTAMP)
     private Date datePublish;
+
+    @ManyToMany
+    @JoinTable(
+            name="likes",
+            joinColumns = @JoinColumn(name="post_id"),
+            inverseJoinColumns = @JoinColumn(name="user_id")
+    )
+    private List<User> users;
 }

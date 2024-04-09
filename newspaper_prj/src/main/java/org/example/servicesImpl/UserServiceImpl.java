@@ -3,6 +3,7 @@ package org.example.servicesImpl;
 import org.example.dto.UserDTO;
 import org.example.repositories.UserRepository;
 import org.example.services.UserService;
+import org.example.util.exceptions.UserNotFoundException;
 import org.example.util.mappers.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> findById(int id) {
-        return Optional.ofNullable(userMapper.toDto(userRepository.findById(id).orElse(null)));
+    public UserDTO findById(int id) {
+        return userMapper.toDto(userRepository.findById(id).orElseThrow(UserNotFoundException::new));
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class LikeServiceImpl implements LikeService {
@@ -28,9 +29,14 @@ public class LikeServiceImpl implements LikeService {
     @Transactional
     public void setLikeToPost(String email,int post_id){
         Post post = postRepository.findById(post_id).orElseThrow(PostNotFoundException::new);
-        List<User> users = post.getUsers();
+        Set<User> users = post.getUsers();
         if(userRepository.findByEmail(email).isPresent()){
-            users.add(userRepository.findByEmail(email).get());
+            User user = userRepository.findByEmail(email).get();
+            if(users.contains(user)){
+                users.remove(user);
+            }else {
+                users.add(user);
+            }
         }
 
         post.setUsers(users);

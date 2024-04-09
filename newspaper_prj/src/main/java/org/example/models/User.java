@@ -8,6 +8,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Data
@@ -39,6 +41,19 @@ public class User {
     @NotEmpty(message = "Password should be not empty")
     private String password;
 
-    @ManyToMany(mappedBy = "users")
-    private List<Post> posts;
+    @ManyToMany(mappedBy = "users", cascade = {CascadeType.MERGE})
+    private Set<Post> posts;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return userId == user.userId && Objects.equals(name, user.name) && Objects.equals(surname, user.surname) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(posts, user.posts);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, name, surname, email, password);
+    }
 }

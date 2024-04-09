@@ -17,8 +17,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @RestController
@@ -58,15 +61,23 @@ public class PostController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     //todo: добавить возможность получить количество лайков на посте
+
+    //todo: добавить обработку и сохранение файла на сервере в методе
     @PostMapping()
-    public HttpEntity<HttpStatus> addPost(@RequestBody @Valid PostDTO postDTO, BindingResult bindingResult){
+    public HttpEntity<String> addPost(@RequestPart("photoFile") MultipartFile photoFile, @RequestPart("postDTO") @Valid PostDTO postDTO,
+                                      BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
            String errorMsg = createErrorMessage(bindingResult);
            throw new PostNotCreatedException(errorMsg);
         }
         postService.save(postDTO);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try (InputStream is = photoFile.getInputStream()) {
+            return new ResponseEntity<>("Name:" + photoFile.getName()
+                    + " File Name:" + photoFile.getOriginalFilename() + ", Size:" + is.available(), HttpStatus.OK);
+        } catch(IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @DeleteMapping("/{id}")

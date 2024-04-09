@@ -10,6 +10,8 @@ import javax.validation.constraints.Size;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -22,7 +24,7 @@ public class Post {
     private int postId;
 
     @Column(name="photo")
-    @NotEmpty(message = "Place for photo should be not empty")
+    //@NotEmpty(message = "Place for photo should be not empty")
     private String photo;
 
     @Column(name="title")
@@ -39,11 +41,24 @@ public class Post {
     @Temporal(TemporalType.TIMESTAMP)
     private Date datePublish;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(
             name="likes",
             joinColumns = @JoinColumn(name="post_id"),
             inverseJoinColumns = @JoinColumn(name="user_id")
     )
-    private List<User> users;
+    private Set<User> users;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return postId == post.postId && Objects.equals(photo, post.photo) && Objects.equals(title, post.title) && Objects.equals(information, post.information) && Objects.equals(datePublish, post.datePublish) && Objects.equals(users, post.users);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(postId, title, information);
+    }
 }

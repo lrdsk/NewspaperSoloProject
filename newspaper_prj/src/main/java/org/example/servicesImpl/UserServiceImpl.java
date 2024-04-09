@@ -1,10 +1,9 @@
 package org.example.servicesImpl;
 
 import org.example.dto.UserDTO;
-import org.example.models.User;
 import org.example.repositories.UserRepository;
 import org.example.services.UserService;
-import org.example.util.UserMapper;
+import org.example.util.mappers.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

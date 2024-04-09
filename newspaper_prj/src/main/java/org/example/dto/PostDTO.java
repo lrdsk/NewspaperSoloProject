@@ -8,6 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -23,6 +24,5 @@ public class PostDTO {
     @NotEmpty(message = "Information should be not empty")
     private String information;
 
-    @NotEmpty(message = "Date should be not empty")
-    private Timestamp datePublish;
+    private Date datePublish;
 }

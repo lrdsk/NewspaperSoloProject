@@ -1,4 +1,4 @@
-package org.example.util;
+package org.example.util.validators;
 
 import org.example.models.User;
 import org.example.servicesImpl.UserServiceImpl;

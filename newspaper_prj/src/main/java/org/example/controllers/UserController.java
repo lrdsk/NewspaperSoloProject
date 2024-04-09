@@ -2,8 +2,8 @@ package org.example.controllers;
 
 import org.example.dto.UserDTO;
 import org.example.servicesImpl.UserServiceImpl;
-import org.example.util.UserMapper;
-import org.example.util.UserValidator;
+import org.example.util.mappers.UserMapper;
+import org.example.util.validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDTO getOne(@PathVariable("id") int id){
+    public UserDTO getOne(@PathVariable("id") int id){ //todo: реализовать выброс исключений и его последующую обработку
         UserDTO userDTO = null;
         if(userService.findById(id).isPresent())
             userDTO = userService.findById(id).get();
@@ -41,7 +41,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public HttpEntity<HttpStatus> deleteOne(@PathVariable("id") int id){
+    public HttpEntity<HttpStatus> deleteOne(@PathVariable("id") int id){ //todo: добавить проверку нашелся ли такой юзер по данному id
         userService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

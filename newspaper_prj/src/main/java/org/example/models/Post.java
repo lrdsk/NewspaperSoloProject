@@ -8,6 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -33,6 +34,7 @@ public class Post {
     private String information;
 
     @Column(name = "date_publish")
-    @NotEmpty(message = "Date should be not empty")
-    private Timestamp datePublish;
+    //@NotEmpty(message = "Date should be not empty")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date datePublish;
 }

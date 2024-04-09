@@ -1,4 +1,4 @@
-package org.example.util;
+package org.example.util.mappers;
 
 import org.example.dto.PostDTO;
 import org.example.dto.UserDTO;

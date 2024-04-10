@@ -1,5 +1,6 @@
 package org.example.services;
 
 public interface LikeService {
-    void setLikeToPost(String email,int post_id);
+    boolean setLikeToPost(String email, int postId);
+    int getCountLikes(int postId);
 }

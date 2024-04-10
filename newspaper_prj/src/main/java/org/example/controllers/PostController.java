@@ -30,13 +30,10 @@ public class PostController {
     private final PostServiceImpl postService;
     private final LikeServiceImpl likeService;
 
-    private final PostMapper postMapper;
-
     @Autowired
-    public PostController(PostServiceImpl postService, LikeServiceImpl likeService, PostMapper postMapper) {
+    public PostController(PostServiceImpl postService, LikeServiceImpl likeService) {
         this.postService = postService;
         this.likeService = likeService;
-        this.postMapper = postMapper;
     }
 
     @GetMapping()
@@ -54,13 +51,17 @@ public class PostController {
         return  postService.findOne(id);
     }
     @GetMapping("/{id}/like")
-    public HttpEntity<HttpStatus> setLikeToPost(@PathVariable("id") int postId){ //todo: нужно реализовать отмену like и check if the post is worth liking
+    public HttpEntity<Boolean> setLikeToPost(@PathVariable("id") int postId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        likeService.setLikeToPost(userDetails.getUsername(), postId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        boolean isLiked = likeService.setLikeToPost(userDetails.getUsername(), postId);
+        return new ResponseEntity<>(isLiked, HttpStatus.OK);
     }
-    //todo: добавить возможность получить количество лайков на посте
+
+    @GetMapping("/{id}/like/count")
+    public int getCountLikes(@PathVariable("id") int postId){
+        return likeService.getCountLikes(postId);
+    }
 
     //todo: добавить обработку и сохранение файла на сервере в методе
     @PostMapping()

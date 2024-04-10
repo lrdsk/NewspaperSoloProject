@@ -4,6 +4,7 @@ import org.example.servicesImpl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,8 +44,9 @@ public class SecurityConfig{
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/users", "/api/auth/registration", "/api/post").permitAll()
-                .antMatchers("/photo/1", "/api/users/like/{id}/like").authenticated()
+                .antMatchers( "/api/auth/registration", "/api/post", "/api/post/{id}", "/api/auth/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/post").authenticated()
+                .antMatchers("/api/post/{id}/like").authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

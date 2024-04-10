@@ -83,15 +83,6 @@ public class AuthController {
         return new ResponseEntity<>(Collections.singletonMap("jwt-token", token), HttpStatus.OK);
     }
 
-    @GetMapping("/showUserInfo")
-    public String showUserInfo(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        System.out.println(authentication.getPrincipal().getClass());
-
-        return userDetails.getUsername();
-    }
-
     private String createErrorMessage(BindingResult bindingResult){
         StringBuilder errorMsg = new StringBuilder();
         List<FieldError> errors = bindingResult.getFieldErrors();

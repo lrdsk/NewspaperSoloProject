@@ -1,6 +1,7 @@
 package org.example.controllers;
 
 import org.example.dto.UserDTO;
+import org.example.models.Post;
 import org.example.security.CustomUserDetails;
 import org.example.servicesImpl.LikeServiceImpl;
 import org.example.servicesImpl.UserServiceImpl;
@@ -19,19 +20,16 @@ import org.springframework.web.bind.annotation.*;
 import sun.security.timestamp.HttpTimestamper;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
     private final UserServiceImpl userService;
-    private final UserMapper userMapper;
-    private final UserValidator userValidator;
 
     @Autowired
-    public UserController(UserServiceImpl userService, UserMapper userMapper, UserValidator userValidator) {
+    public UserController(UserServiceImpl userService) {
         this.userService = userService;
-        this.userMapper = userMapper;
-        this.userValidator = userValidator;
     }
 
     @GetMapping()
@@ -40,9 +38,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDTO getOne(@PathVariable("id") int id){
-        return userService.findById(id);
+    public UserDTO getOne(@PathVariable("id") int userId){
+        return userService.findById(userId);
     }
+
+    /*@GetMapping("/{id}/like")
+    public Set<Post> getLikes(@PathVariable("id") int userId){
+
+    }*/
 
     @DeleteMapping("/{id}")
     public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") int id){

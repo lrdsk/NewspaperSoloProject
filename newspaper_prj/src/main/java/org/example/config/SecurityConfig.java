@@ -44,9 +44,9 @@ public class SecurityConfig{
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers( "/api/auth/registration", "/api/post", "/api/post/{id}", "/api/auth/login").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/post").authenticated()
-                .antMatchers("/api/post/{id}/like").authenticated()
+                .antMatchers( "/api/auth/registration", "/api/post", "/api/auth/login", "/api/post/**/like/count").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/post/**").authenticated()
+                .antMatchers("/api/post/**/like").authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

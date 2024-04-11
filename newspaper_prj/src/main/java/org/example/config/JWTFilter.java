@@ -4,6 +4,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.example.security.JWTUtil;
 import org.example.servicesImpl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,10 +50,16 @@ public class JWTFilter extends OncePerRequestFilter {
                     }
                 } catch (JWTVerificationException ex) {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
+                    return;
+                } catch (AccessDeniedException ex) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: " + ex.getMessage()); //todo : добавит правилну accessdenied handler
+                    return;
                 }
+
             }
         }
-
-        filterChain.doFilter(request,response);
+        System.out.println("START WORK");
+        filterChain.doFilter(request, response);
+        System.out.println("END WORK");
     }
 }

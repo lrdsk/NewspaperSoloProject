@@ -44,6 +44,9 @@ public class User {
     @ManyToMany(mappedBy = "users", cascade = {CascadeType.MERGE})
     private Set<Post> posts;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

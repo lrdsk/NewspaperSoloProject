@@ -2,6 +2,7 @@ package org.example.servicesImpl;
 
 import org.example.dto.PostDTO;
 import org.example.dto.UserDTO;
+import org.example.models.Post;
 import org.example.models.User;
 import org.example.repositories.UserRepository;
 import org.example.services.UserService;
@@ -22,13 +23,11 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final PostMapper postMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, PostMapper postMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.postMapper = postMapper;
     }
 
     @Override
@@ -52,8 +51,9 @@ public class UserServiceImpl implements UserService {
         return Optional.ofNullable(userMapper.toDto(userRepository.findByEmail(email).orElse(null)));
     }
 
-   /* public Set<PostDTO> findPostLiked(int userId){
-        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        return user.getPosts().stream().map(postMapper::toDto).collect(Collectors.toSet());
-    }*/
+    @Override
+    public Set<Integer> getSetPostLiked(String email){
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        return user.getPosts().stream().map(Post::getPostId).collect(Collectors.toSet());
+    }
 }

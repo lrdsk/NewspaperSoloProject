@@ -25,7 +25,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public boolean setLikeToPost(String email, int post_id){//todo: добавить обработку исключений
+    public boolean setLikeToPost(String email, int post_id){// todo: добавить обработку исключений
         Post post = postRepository.findById(post_id).orElseThrow(PostNotFoundException::new);
         Set<User> users = post.getUsers();
         if(userRepository.findByEmail(email).isPresent()){

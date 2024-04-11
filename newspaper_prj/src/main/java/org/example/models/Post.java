@@ -8,10 +8,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -48,6 +45,9 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name="user_id")
     )
     private Set<User> users;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments;
 
     @Override
     public boolean equals(Object o) {

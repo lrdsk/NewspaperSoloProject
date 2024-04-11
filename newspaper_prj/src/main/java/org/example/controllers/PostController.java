@@ -1,13 +1,12 @@
 package org.example.controllers;
 
+import org.example.dto.CommentDTO;
 import org.example.dto.PostDTO;
 import org.example.security.CustomUserDetails;
+import org.example.servicesImpl.CommentServiceImpl;
 import org.example.servicesImpl.LikeServiceImpl;
 import org.example.servicesImpl.PostServiceImpl;
-import org.example.util.errorResponses.ErrorResponse;
 import org.example.util.exceptions.PostNotCreatedException;
-import org.example.util.exceptions.PostNotFoundException;
-import org.example.util.mappers.PostMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -29,19 +28,16 @@ import java.util.List;
 public class PostController {
     private final PostServiceImpl postService;
     private final LikeServiceImpl likeService;
+    private final CommentServiceImpl commentService;
 
     @Autowired
-    public PostController(PostServiceImpl postService, LikeServiceImpl likeService) {
+    public PostController(PostServiceImpl postService, LikeServiceImpl likeService, CommentServiceImpl commentService) {
         this.postService = postService;
         this.likeService = likeService;
+        this.commentService = commentService;
     }
 
     @GetMapping()
-    public List<PostDTO> index(){
-        return postService.findAll();
-    }
-
-    @GetMapping("/sort")
     public List<PostDTO> indexByDateDesc(){
         return postService.findAllByDateDesc();
     }
@@ -50,7 +46,7 @@ public class PostController {
     public PostDTO getOne(@PathVariable("id") int id){
         return  postService.findOne(id);
     }
-    @GetMapping("/{id}/like")
+    @PostMapping("/{id}/like")
     public HttpEntity<Boolean> setLikeToPost(@PathVariable("id") int postId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -81,6 +77,27 @@ public class PostController {
         }
     }
 
+    @PostMapping("/{postId}")
+    public HttpEntity<HttpStatus> addComment(@PathVariable("postId") int postId,
+                                             @RequestBody CommentDTO commentDTO, BindingResult bindingResult){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        commentDTO.setUserEmail(userDetails.getUsername());
+        commentDTO.setPostId(postId);
+
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        commentService.saveComment(commentDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @GetMapping("/{postId}/comments")
+    public List<CommentDTO> index(@PathVariable("postId") int postId){
+        return commentService.findAllByPostId(postId);
+    }
+
     @DeleteMapping("/{id}")
     public HttpEntity<HttpStatus> deletePost(@PathVariable("id") int id){
         PostDTO post = postService.findOne(id);
@@ -90,7 +107,7 @@ public class PostController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private String createErrorMessage(BindingResult bindingResult){
+    private String createErrorMessage(BindingResult bindingResult){ //todo: вынести в отдельный класс component
         StringBuilder errorMsg = new StringBuilder();
         List<FieldError> errors = bindingResult.getFieldErrors();
         for(FieldError error : errors){

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -44,9 +45,11 @@ public class SecurityConfig{
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers( "/api/auth/registration", "/api/post", "/api/auth/login", "/api/post/**/like/count", "/api/post/**/comments").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/post").hasAnyRole("ADMIN")
+                .antMatchers( "/api/users/**", "/api/auth/registration", "/api/auth/login", "/api/post/**/like/count", "/api/post/**/comments").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/post/**").authenticated()
                 .antMatchers("/api/post/**/like", "api/users/likes").authenticated()
+                .anyRequest().hasAnyRole("USER", "ADMIN")
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

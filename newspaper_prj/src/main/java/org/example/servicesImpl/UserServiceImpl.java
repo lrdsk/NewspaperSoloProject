@@ -4,6 +4,7 @@ import org.example.dto.PostDTO;
 import org.example.dto.UserDTO;
 import org.example.models.Post;
 import org.example.models.User;
+import org.example.models.UserRole;
 import org.example.repositories.UserRepository;
 import org.example.services.UserService;
 import org.example.util.exceptions.UserNotFoundException;
@@ -55,5 +56,9 @@ public class UserServiceImpl implements UserService {
     public Set<Integer> getSetPostLiked(String email){
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         return user.getPosts().stream().map(Post::getPostId).collect(Collectors.toSet());
+    }
+
+    public UserRole getRoleById(int id){
+        return userRepository.findById(id).get().getRole();
     }
 }

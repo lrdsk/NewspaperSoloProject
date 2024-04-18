@@ -52,14 +52,12 @@ public class JWTFilter extends OncePerRequestFilter {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid JWT Token");
                     return;
                 } catch (AccessDeniedException ex) {
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: " + ex.getMessage()); //todo : добавит правилну accessdenied handler
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: " + ex.getMessage());
                     return;
                 }
 
             }
         }
-        System.out.println("START WORK");
         filterChain.doFilter(request, response);
-        System.out.println("END WORK");
     }
 }

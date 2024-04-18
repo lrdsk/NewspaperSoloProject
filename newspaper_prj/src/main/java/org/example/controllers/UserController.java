@@ -33,7 +33,7 @@ public class UserController {
         return userService.findById(userId);
     }*/
 
-    @GetMapping("/like")
+    @GetMapping("/likes")
     public Set<Integer> getLikes(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();

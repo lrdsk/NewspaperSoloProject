@@ -6,6 +6,7 @@ import org.example.models.User;
 import org.example.security.JWTUtil;
 import org.example.servicesImpl.RegistrationServiceImpl;
 import org.example.servicesImpl.UserServiceImpl;
+import org.example.util.errorResponses.ErrorMessage;
 import org.example.util.exceptions.AuthFormIncorrectException;
 import org.example.util.exceptions.UserIncorrectException;
 import org.example.util.mappers.UserMapper;
@@ -53,7 +54,7 @@ public class AuthController {
         userValidator.validate(user, bindingResult);
 
         if(bindingResult.hasErrors()){
-            String errorMsg = createErrorMessage(bindingResult);
+            String errorMsg = ErrorMessage.createErrorMessage(bindingResult);
             throw new UserIncorrectException(errorMsg);
         }
 
@@ -66,7 +67,7 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> performLogin(@RequestBody @Valid AuthDTO authDTO,
                                                BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-           String errorMsg = createErrorMessage(bindingResult);
+           String errorMsg = ErrorMessage.createErrorMessage(bindingResult);
            throw new AuthFormIncorrectException(errorMsg);
         }
 
@@ -87,18 +88,4 @@ public class AuthController {
         response.put("surname", userDTO.getSurname());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-    private String createErrorMessage(BindingResult bindingResult){ // todo: вынети в отделны ла
-        StringBuilder errorMsg = new StringBuilder();
-        List<FieldError> errors = bindingResult.getFieldErrors();
-        for(FieldError error : errors){
-            errorMsg.append(error.getField())
-                    .append(" - ").append(error.getDefaultMessage())
-                    .append("; ");
-        }
-
-        return errorMsg.toString();
-    }
-
-
 }

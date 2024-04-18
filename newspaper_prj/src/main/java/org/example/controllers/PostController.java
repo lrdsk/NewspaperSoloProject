@@ -6,6 +6,7 @@ import org.example.security.CustomUserDetails;
 import org.example.servicesImpl.CommentServiceImpl;
 import org.example.servicesImpl.LikeServiceImpl;
 import org.example.servicesImpl.PostServiceImpl;
+import org.example.util.errorResponses.ErrorMessage;
 import org.example.util.exceptions.PostNotCreatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -65,7 +66,7 @@ public class PostController {
                                       BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
-           String errorMsg = createErrorMessage(bindingResult);
+           String errorMsg = ErrorMessage.createErrorMessage(bindingResult);
            throw new PostNotCreatedException(errorMsg);
         }
         postService.save(postDTO);
@@ -98,24 +99,12 @@ public class PostController {
         return commentService.findAllByPostId(postId);
     }
 
-    @DeleteMapping("/{id}")
+   /* @DeleteMapping("/{id}")
     public HttpEntity<HttpStatus> deletePost(@PathVariable("id") int id){
         PostDTO post = postService.findOne(id);
         if(post != null)
             postService.deleteOne(id);
 
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    private String createErrorMessage(BindingResult bindingResult){ //todo: вынести в отдельный класс component
-        StringBuilder errorMsg = new StringBuilder();
-        List<FieldError> errors = bindingResult.getFieldErrors();
-        for(FieldError error : errors){
-            errorMsg.append(error.getField())
-                    .append(" - ").append(error.getDefaultMessage())
-                    .append("; ");
-        }
-
-        return errorMsg.toString();
-    }
+    }*/
 }

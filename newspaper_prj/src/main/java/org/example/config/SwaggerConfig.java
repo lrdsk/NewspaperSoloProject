@@ -13,6 +13,5 @@ public class SwaggerConfig {
     public GroupedOpenApi api() {
         return GroupedOpenApi.builder().group("").pathsToMatch("/swagger-ui/").build();
     }
-
 }
 

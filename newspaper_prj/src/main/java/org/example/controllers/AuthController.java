@@ -1,5 +1,7 @@
 package org.example.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.dto.AuthDTO;
 import org.example.dto.UserDTO;
 import org.example.models.User;
@@ -46,8 +48,10 @@ public class AuthController {
         this.authenticationManager = authenticationManager;
         this.userService = userService;
     }
-
+    @Operation(summary = "Регистрация нового пользователя")
     @PostMapping("/registration")
+    @ApiResponse(responseCode = "200", description = "Пользователь успешно авторизован, вернется jwt-token")
+    @ApiResponse(responseCode = "400", description = "Неорретно введены данные для регистрации")
     public ResponseEntity<Map<String, String>> performRegistration(@RequestBody @Valid UserDTO userDTO,
                                                    BindingResult bindingResult){
         User user = userMapper.toEntity(userDTO);
@@ -63,7 +67,10 @@ public class AuthController {
         return new ResponseEntity<>(Collections.singletonMap("jwt-token", token), HttpStatus.OK);
     }
 
+    @Operation(summary = "Авторизация пользователя")
     @PostMapping("/login")
+    @ApiResponse(responseCode = "200", description = "Пользователь успешно авторизован, вернется jwt-token и данные пользователя (name, surname)")
+    @ApiResponse(responseCode = "400", description = "Неорретно введены данные для авторизации или они недействительны")
     public ResponseEntity<Map<String, String>> performLogin(@RequestBody @Valid AuthDTO authDTO,
                                                BindingResult bindingResult){
         if(bindingResult.hasErrors()){

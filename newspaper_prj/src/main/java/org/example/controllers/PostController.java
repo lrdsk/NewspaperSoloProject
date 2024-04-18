@@ -1,5 +1,9 @@
 package org.example.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.dto.CommentDTO;
 import org.example.dto.PostDTO;
 import org.example.security.CustomUserDetails;
@@ -38,16 +42,23 @@ public class PostController {
         this.commentService = commentService;
     }
 
+    @Operation(summary = "Получить все посты в виде списка")
     @GetMapping()
     public List<PostDTO> indexByDateDesc(){
         return postService.findAllByDateDesc();
     }
 
+    @Operation(summary = "Получить пост по заданному id")
     @GetMapping("/{id}")
     public PostDTO getOne(@PathVariable("id") int id){
         return  postService.findOne(id);
     }
+    @Operation(summary = "По id поста поставить лайк при авторизированном пользователе",
+            description = "Нужно отправлять header authorization Bearer token")
     @PostMapping("/{id}/like")
+    @ApiResponse(responseCode = "200", description = "Like успешно добавлен")
+    @ApiResponse(responseCode = "403", description = "Не отправлен header authorization Bearer token")
+    @ApiResponse(responseCode = "500", description = "Invalid jwt-token to authorization")
     public HttpEntity<Boolean> setLikeToPost(@PathVariable("id") int postId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -55,14 +66,20 @@ public class PostController {
         return new ResponseEntity<>(isLiked, HttpStatus.OK);
     }
 
+    @Operation(summary = "Получить количество лайков на посте по его id")
     @GetMapping("/{id}/like/count")
     public int getCountLikes(@PathVariable("id") int postId){
         return likeService.getCountLikes(postId);
     }
 
     //todo: добавить обработку и сохранение файла на сервере в методе
+    @Operation(summary = "Добавить новый пост ",
+            description = "Может только человек с ролью админ")
     @PostMapping()
-    public HttpEntity<String> addPost(@RequestPart("photoFile") MultipartFile photoFile, @RequestPart("postDTO") @Valid PostDTO postDTO,
+    public HttpEntity<String> addPost(@Parameter(description = "photoFile", schema = @Schema(type = "MultipartFile"))
+                                          @RequestPart("photoFile") MultipartFile photoFile,
+                                      @Parameter(description = "postDTO", schema = @Schema(type = "json"))
+                                      @RequestPart("postDTO") @Valid PostDTO postDTO,
                                       BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
@@ -78,7 +95,13 @@ public class PostController {
         }
     }
 
+    @Operation(summary = "Добавления комментария к посту по его id",
+            description = "Нужно отправлять header authorization Bearer token")
     @PostMapping("/{postId}")
+    @ApiResponse(responseCode = "200", description = "Комментарий успешно добавлен")
+    @ApiResponse(responseCode = "403", description = "Не отправлен header authorization Bearer token")
+    @ApiResponse(responseCode = "400", description = "Не правильная форма комментария")
+    @ApiResponse(responseCode = "500", description = "Invalid jwt-token to authorization")
     public HttpEntity<HttpStatus> addComment(@PathVariable("postId") int postId,
                                              @RequestBody CommentDTO commentDTO, BindingResult bindingResult){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -94,8 +117,9 @@ public class PostController {
     }
 
 
+    @Operation(summary = "Получить все комменарии к послту по его id")
     @GetMapping("/{postId}/comments")
-    public List<CommentDTO> index(@PathVariable("postId") int postId){
+    public List<CommentDTO> indexComments(@PathVariable("postId") int postId){
         return commentService.findAllByPostId(postId);
     }
 

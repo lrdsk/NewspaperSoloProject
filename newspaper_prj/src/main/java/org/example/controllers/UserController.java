@@ -1,5 +1,7 @@
 package org.example.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.dto.UserDTO;
 import org.example.security.CustomUserDetails;
 import org.example.servicesImpl.UserServiceImpl;
@@ -33,7 +35,11 @@ public class UserController {
         return userService.findById(userId);
     }*/
 
+    @Operation(summary = "Get all user likes by his id")
     @GetMapping("/likes")
+    @ApiResponse(responseCode = "200", description = "List of id posts is liked")
+    @ApiResponse(responseCode = "403", description = "Не отправлен header authorization Bearer token")
+    @ApiResponse(responseCode = "500", description = "Invalid jwt-token to authorization")
     public Set<Integer> getLikes(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();

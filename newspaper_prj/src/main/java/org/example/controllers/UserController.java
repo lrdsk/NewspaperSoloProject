@@ -2,14 +2,9 @@ package org.example.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.example.dto.UserDTO;
-import org.example.models.UserRole;
 import org.example.security.CustomUserDetails;
 import org.example.servicesImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -47,12 +42,6 @@ public class UserController {
         String email = userDetails.getUsername();
         return userService.getSetPostLiked(email);
     }
-
-    @GetMapping("/{id}")
-    public UserRole getRole(@PathVariable("id") int id){
-        return userService.getRoleById(id);
-    }
-
 /*    @DeleteMapping("/{id}")
     public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") int id){
         UserDTO userDTO = userService.findById(id);

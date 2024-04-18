@@ -48,8 +48,7 @@ public class User {
     private List<Comment> comments;
 
     @Column(name = "role")
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private String role;
 
     @Override
     public boolean equals(Object o) {

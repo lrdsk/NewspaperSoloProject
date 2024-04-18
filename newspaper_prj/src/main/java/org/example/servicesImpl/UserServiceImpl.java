@@ -1,14 +1,11 @@
 package org.example.servicesImpl;
 
-import org.example.dto.PostDTO;
 import org.example.dto.UserDTO;
 import org.example.models.Post;
 import org.example.models.User;
-import org.example.models.UserRole;
 import org.example.repositories.UserRepository;
 import org.example.services.UserService;
 import org.example.util.exceptions.UserNotFoundException;
-import org.example.util.mappers.PostMapper;
 import org.example.util.mappers.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,7 +55,4 @@ public class UserServiceImpl implements UserService {
         return user.getPosts().stream().map(Post::getPostId).collect(Collectors.toSet());
     }
 
-    public UserRole getRoleById(int id){
-        return userRepository.findById(id).get().getRole();
-    }
 }

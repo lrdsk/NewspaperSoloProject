@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.models.Comment;
+import org.springframework.core.io.Resource;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -22,7 +23,7 @@ public class PostDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int postId;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonIgnore
     private String photo;
 
     @NotEmpty(message = "Title should be not empty")

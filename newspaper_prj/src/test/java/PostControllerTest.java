@@ -1,62 +1,52 @@
-import config.TestConfig;
-import org.example.config.SecurityConfig;
 import org.example.controllers.PostController;
 import org.example.dto.PostDTO;
-import org.example.repositories.UserRepository;
 import org.example.servicesImpl.PostServiceImpl;
-import org.example.servicesImpl.UserDetailsServiceImpl;
-import org.example.servicesImpl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.util.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+@ExtendWith(MockitoExtension.class)
+public class PostControllerTest {
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.Matchers.is;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.http.MediaType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+    @Mock
+    private PostServiceImpl postServiceMock;
 
-
-@SpringBootTest(classes = {SecurityConfig.class, UserDetailsServiceImpl.class})
-class PostControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private PostServiceImpl postService;
+    @InjectMocks
+    private PostController postController;
 
     @Test
-    void testIndexByDateDesc() throws Exception {
-        List<PostDTO> posts = new ArrayList<>();
-        posts.add(new PostDTO(1,"", "Title 1", "Content 1", new Date()));
-        posts.add(new PostDTO(2,"", "Title 2", "Content 2", new Date()));
-        when(postService.findAllByDateDesc()).thenReturn(
-                posts
+    void indexByDateDesc_ReturnsPostDTOList() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.HOUR_OF_DAY, 1);
+
+        Date newDate = calendar.getTime();
+
+        List<PostDTO> mockPostDTOList = Arrays.asList(
+                new PostDTO(2,"", "Title 2", "Content 2", newDate),
+                new PostDTO(1,"", "Title 1", "Content 1", new Date())
         );
 
-        mockMvc.perform(get("/api/post"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].title", is("Title 1")))
-                .andExpect(jsonPath("$[1].title", is("Title 2")));
+        Mockito.when(postServiceMock.findAllByDateDesc()).thenReturn(mockPostDTOList);
+
+        List<PostDTO> result = postController.indexByDateDesc();
+
+        // Проверяем, что результат не null и содержит ожидаемые данные
+        assertNotNull(result);
+        assertEquals(2, result.size());
+
+        // Проверяем, что данные соответствуют ожидаемым данным
+        assertEquals("Title 2", result.get(0).getTitle());
+        assertEquals("Content 2", result.get(0).getInformation());
+
+        assertEquals("Title 1", result.get(1).getTitle());
+        assertEquals("Content 1", result.get(1).getInformation());
     }
 }
+
 

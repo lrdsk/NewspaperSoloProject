@@ -1,46 +1,60 @@
 import org.example.controllers.UserController;
+import org.example.security.JWTUtil;
 import org.example.servicesImpl.UserServiceImpl;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
-
     @Mock
     private UserServiceImpl userService;
+
+    @Mock
+    private JWTUtil jwtUtil;
 
     @InjectMocks
     private UserController userController;
 
-   // @Test
-    public void testGetLikes() throws Exception {
-        mockMvc.perform(get("/api/users/likes")
-                        .header("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJVc2VyIGRldGFpbHMiLCJpc3MiOiJtaWtoYWlsb3YiLCJleHAiOjE3MTM4NjQ3ODksImlhdCI6MTcxMzg2MTE4OSwiZW1haWwiOiJvQG1haWwucnUifQ.Jy0dAL8m4hw13SmgUs01UjLvEGJnC7YwsLHOCkzLQB4"))
-                .andExpect(status().isOk());
+    @Test
+    public void testGetLikes() {
+        String fakeToken = "Bearer abc123";
+        String fakeEmail = "test@example.com";
 
-        // Устанавливаем ожидаемый результат для mock сервиса userService
-        Set<Integer> expectedLikes = new HashSet<>(Arrays.asList(1, 2, 3));
-        when(userService.getSetPostLiked("test@example.com")).thenReturn(expectedLikes);
+        when(jwtUtil.validateTokenAndRetrieveClaim(anyString())).thenReturn(fakeEmail);
 
-        // Вызываем метод контроллера
-        //Set<Integer> actualLikes = userController.getLikes();
+        Set<Integer> expectedLikes = new HashSet<>();
+        expectedLikes.add(1);
+        expectedLikes.add(2);
 
-        // Проверяем, что результат совпадает с ожидаемым
-        //assertEquals(expectedLikes, actualLikes);
+        when(userService.getSetPostLiked(eq(fakeEmail))).thenReturn(expectedLikes);
+
+        Set<Integer> result = userController.getLikes(fakeToken);
+
+        verify(userService).getSetPostLiked(eq(fakeEmail));
+
+        assertEquals(expectedLikes, result);
     }
 }

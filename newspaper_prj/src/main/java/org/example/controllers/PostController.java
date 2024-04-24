@@ -8,6 +8,7 @@ import javafx.geometry.Pos;
 import org.example.dto.CommentDTO;
 import org.example.dto.PostDTO;
 import org.example.security.CustomUserDetails;
+import org.example.security.JWTUtil;
 import org.example.servicesImpl.CommentServiceImpl;
 import org.example.servicesImpl.LikeServiceImpl;
 import org.example.servicesImpl.MultipartServiceImpl;
@@ -38,16 +39,20 @@ public class PostController {
     private final LikeServiceImpl likeService;
     private final CommentServiceImpl commentService;
     private final MultipartServiceImpl multipartService;
+    private final JWTUtil jwtUtil;
 
     @Autowired
-    public PostController(PostServiceImpl postService, LikeServiceImpl likeService, CommentServiceImpl commentService, MultipartServiceImpl multipartService) {
+    public PostController(PostServiceImpl postService, LikeServiceImpl likeService,
+                          CommentServiceImpl commentService, MultipartServiceImpl multipartService,
+                          JWTUtil jwtUtil) {
         this.postService = postService;
         this.likeService = likeService;
         this.commentService = commentService;
         this.multipartService = multipartService;
+        this.jwtUtil = jwtUtil;
     }
 
-    @Operation(summary = "Получить все посты в виде списка")
+    @Operation(summary = "Получить все посты в виде списка, отсортированные по дате")
     @GetMapping()
     public List<PostDTO> indexByDateDesc(){
         return postService.findAllByDateDesc();
@@ -100,7 +105,6 @@ public class PostController {
         return likeService.getCountLikes(postId);
     }
 
-    //todo: добавить обработку и сохранение файла на сервере в методе
     @Operation(summary = "Добавить новый пост ",
             description = "Может только человек с ролью админ")
     @PostMapping()
@@ -129,11 +133,11 @@ public class PostController {
     @ApiResponse(responseCode = "403", description = "Не отправлен header authorization Bearer token")
     @ApiResponse(responseCode = "400", description = "Не правильная форма комментария")
     @ApiResponse(responseCode = "500", description = "Invalid jwt-token to authorization")
-    public HttpEntity<HttpStatus> addComment(@PathVariable("postId") int postId,
+    public HttpEntity<HttpStatus> addComment(@RequestHeader(name = "Authorization") String token, @PathVariable("postId") int postId,
                                              @RequestBody CommentDTO commentDTO, BindingResult bindingResult){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        commentDTO.setUserEmail(userDetails.getUsername());
+        String jwtToken = token.substring(7);
+        String email = jwtUtil.validateTokenAndRetrieveClaim(jwtToken);
+        commentDTO.setUserEmail(email);
         commentDTO.setPostId(postId);
 
         if(bindingResult.hasErrors()){
@@ -144,7 +148,7 @@ public class PostController {
     }
 
 
-    @Operation(summary = "Получить все комменарии к послту по его id")
+    @Operation(summary = "Получить все комменарии к посту по его id")
     @GetMapping("/{postId}/comments")
     public List<CommentDTO> indexComments(@PathVariable("postId") int postId){
         return commentService.findAllByPostId(postId);

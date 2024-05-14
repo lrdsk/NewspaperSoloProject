@@ -1,4 +1,4 @@
-package org.example.servicesImpl;
+package org.example.services.servicesImpl;
 
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class MultipartServiceImpl {
-    private final Path filesLocation = Paths.get("src/main/resources/template");
+    private final Path filesLocation = Paths.get("src/main/resources/templates");
 
     public String savePhoto(MultipartFile file) throws IOException {
         File uploadDir = new File(filesLocation.toAbsolutePath().toString());

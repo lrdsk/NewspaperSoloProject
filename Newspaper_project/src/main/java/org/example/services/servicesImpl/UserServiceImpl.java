@@ -1,4 +1,4 @@
-package org.example.servicesImpl;
+package org.example.services.servicesImpl;
 
 import org.example.dto.UserDTO;
 import org.example.models.Post;

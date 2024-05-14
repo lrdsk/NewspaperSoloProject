@@ -1,7 +1,7 @@
 package org.example.util.validators;
 
 import org.example.models.User;
-import org.example.servicesImpl.UserServiceImpl;
+import org.example.services.servicesImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

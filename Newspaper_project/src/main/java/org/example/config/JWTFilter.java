@@ -2,7 +2,7 @@ package org.example.config;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import org.example.security.JWTUtil;
-import org.example.servicesImpl.UserDetailsServiceImpl;
+import org.example.services.servicesImpl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -1,4 +1,4 @@
-package org.example.servicesImpl;
+package org.example.services.servicesImpl;
 
 import org.example.models.Post;
 import org.example.models.User;
@@ -26,7 +26,7 @@ public class LikeServiceImpl implements LikeService {
 
     @Override
     @Transactional
-    public boolean setLikeToPost(String email, int post_id){// todo: добавить обработку исключений
+    public boolean setLikeToPost(String email, int post_id){
         Post post = postRepository.findById(post_id).orElseThrow(PostNotFoundException::new);
         Set<User> users = post.getUsers();
         if(userRepository.findByEmail(email).isPresent()){

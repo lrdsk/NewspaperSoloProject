@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  client-backend:
+    image: client:0.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - service-db
+    environment:
+      - SERVER_PORT= 8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db:5432/docker_test_db
+      - spring.datasource.username=postgres
+      - spring.datasource.password=postgres
+      - spring.jpa.hibernate.ddl-auto=update
+      - spring.liquibase.enabled=true
+      - spring.liquibase.drop-first=false
+      - spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml
+      - spring.liquibase.default-schema=public
+
+  service-db:
+    image: postgres:14.9
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports:
+      - "15432:5432"
+    volumes:
+      - ./infrastructure/db/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
+    restart: unless-stopped
+
+volumes:
+  db-data:
+  pgadmin-data:

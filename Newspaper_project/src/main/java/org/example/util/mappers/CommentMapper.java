@@ -2,8 +2,8 @@ package org.example.util.mappers;
 
 import org.example.dto.CommentDTO;
 import org.example.models.Comment;
-import org.example.servicesImpl.PostServiceImpl;
-import org.example.servicesImpl.UserServiceImpl;
+import org.example.services.servicesImpl.PostServiceImpl;
+import org.example.services.servicesImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

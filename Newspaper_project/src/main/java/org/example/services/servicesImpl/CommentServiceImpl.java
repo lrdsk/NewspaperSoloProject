@@ -1,4 +1,4 @@
-package org.example.servicesImpl;
+package org.example.services.servicesImpl;
 
 import org.example.dto.CommentDTO;
 import org.example.models.Comment;

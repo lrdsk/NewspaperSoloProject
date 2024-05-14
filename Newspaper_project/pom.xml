@@ -92,6 +92,13 @@
 			<artifactId>classgraph</artifactId>
 			<version>4.8.139</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.liquibase/liquibase-core -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+			<version>4.24.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -103,6 +110,7 @@
 					<image>
 						<builder>paketobuildpacks/builder-jammy-base:latest</builder>
 					</image>
+					<mainClass>org.example.NewspaperProjectApplication</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

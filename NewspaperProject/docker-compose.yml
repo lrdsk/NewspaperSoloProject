@@ -11,7 +11,7 @@ services:
       - service-db
     environment:
       - SERVER_PORT= 8080
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db:5432/docker_test_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db:5432/newspaper
       - spring.datasource.username=postgres
       - spring.datasource.password=postgres
       - spring.jpa.hibernate.ddl-auto=update
@@ -30,7 +30,3 @@ services:
     volumes:
       - ./infrastructure/db/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
     restart: unless-stopped
-
-volumes:
-  db-data:
-  pgadmin-data:

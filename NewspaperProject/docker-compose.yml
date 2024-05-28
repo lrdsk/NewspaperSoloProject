@@ -15,10 +15,7 @@ services:
       - spring.datasource.username=postgres
       - spring.datasource.password=postgres
       - spring.jpa.hibernate.ddl-auto=update
-      - spring.liquibase.enabled=true
-      - spring.liquibase.drop-first=false
-      - spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.xml
-      - spring.liquibase.default-schema=public
+
 
   service-db:
     image: postgres:14.9

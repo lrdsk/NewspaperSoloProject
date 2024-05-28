@@ -3,6 +3,7 @@ package org.example.services.servicesImpl;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -18,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 public class MultipartServiceImpl {
     private final Path filesLocation = Paths.get("src/main/resources/templates");
 
+    @Transactional
     public String savePhoto(MultipartFile file) throws IOException {
         File uploadDir = new File(filesLocation.toAbsolutePath().toString());
 

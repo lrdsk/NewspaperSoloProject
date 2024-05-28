@@ -4,6 +4,7 @@ import org.example.dto.UserDTO;
 import org.example.models.Post;
 import org.example.models.User;
 import org.example.repositories.UserRepository;
+import org.example.security.JWTUtil;
 import org.example.services.UserService;
 import org.example.util.exceptions.UserNotFoundException;
 import org.example.util.mappers.UserMapper;
@@ -21,11 +22,13 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final JWTUtil jwtUtil;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, JWTUtil jwtUtil) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -50,7 +53,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Set<Integer> getSetPostLiked(String email){
+    public Set<Integer> getSetPostLiked(String token){
+        String jwtToken = token.substring(7);
+        String email = jwtUtil.validateTokenAndRetrieveClaim(jwtToken);
+
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
         return user.getPosts().stream().map(Post::getPostId).collect(Collectors.toSet());
     }

@@ -33,18 +33,14 @@ public class PostController {
     private final PostServiceImpl postService;
     private final LikeServiceImpl likeService;
     private final CommentServiceImpl commentService;
-    private final MultipartServiceImpl multipartService;
-    private final JWTUtil jwtUtil;
+
 
     @Autowired
     public PostController(PostServiceImpl postService, LikeServiceImpl likeService,
-                          CommentServiceImpl commentService, MultipartServiceImpl multipartService,
-                          JWTUtil jwtUtil) {
+                          CommentServiceImpl commentService) {
         this.postService = postService;
         this.likeService = likeService;
         this.commentService = commentService;
-        this.multipartService = multipartService;
-        this.jwtUtil = jwtUtil;
     }
 
     @Operation(summary = "Получить все посты в виде списка, отсортированные по дате")
@@ -73,10 +69,7 @@ public class PostController {
     @ApiResponse(responseCode = "403", description = "Не отправлен header authorization Bearer token")
     @ApiResponse(responseCode = "500", description = "Invalid jwt-token to authorization")
     public HttpEntity<Boolean> setLikeToPost(@PathVariable("id") int postId){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        boolean isLiked = likeService.setLikeToPost(userDetails.getUsername(), postId);
-        return new ResponseEntity<>(isLiked, HttpStatus.OK);
+       return likeService.setLikeToPost(postId);
     }
 
     @Operation(summary = "Получить количество лайков на посте по его id")
@@ -94,16 +87,7 @@ public class PostController {
                                       @RequestPart("postDTO") @Valid PostDTO postDTO,
                                       BindingResult bindingResult) {
 
-        if(bindingResult.hasErrors()){
-           String errorMsg = ErrorMessage.createErrorMessage(bindingResult);
-           throw new PostNotCreatedException(errorMsg);
-        }
-        try {
-            postService.save(photoFile, postDTO);
-            return new ResponseEntity<>("Post saved", HttpStatus.OK);
-        } catch(IOException ex) {
-            throw new RuntimeException(ex);
-        }
+        return postService.addPost(photoFile, postDTO, bindingResult);
     }
 
     @Operation(summary = "Добавления комментария к посту по его id",
@@ -115,16 +99,7 @@ public class PostController {
     @ApiResponse(responseCode = "500", description = "Invalid jwt-token to authorization")
     public HttpEntity<HttpStatus> addComment(@RequestHeader(name = "Authorization") String token, @PathVariable("postId") int postId,
                                              @RequestBody CommentDTO commentDTO, BindingResult bindingResult){
-        String jwtToken = token.substring(7);
-        String email = jwtUtil.validateTokenAndRetrieveClaim(jwtToken);
-        commentDTO.setUserEmail(email);
-        commentDTO.setPostId(postId);
-
-        if(bindingResult.hasErrors()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        commentService.saveComment(commentDTO);
-        return new ResponseEntity<>(HttpStatus.OK);
+       return commentService.addComment(token, postId, commentDTO, bindingResult);
     }
 
 
@@ -133,13 +108,4 @@ public class PostController {
     public List<CommentDTO> indexComments(@PathVariable("postId") int postId){
         return commentService.findAllByPostId(postId);
     }
-
-   /* @DeleteMapping("/{id}")
-    public HttpEntity<HttpStatus> deletePost(@PathVariable("id") int id){
-        PostDTO post = postService.findOne(id);
-        if(post != null)
-            postService.deleteOne(id);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }*/
 }

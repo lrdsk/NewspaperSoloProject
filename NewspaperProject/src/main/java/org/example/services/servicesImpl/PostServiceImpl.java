@@ -3,18 +3,21 @@ package org.example.services.servicesImpl;
 import org.example.dto.PostDTO;
 import org.example.repositories.PostRepository;
 import org.example.services.PostService;
+import org.example.util.errorResponses.ErrorMessage;
+import org.example.util.exceptions.PostNotCreatedException;
 import org.example.util.exceptions.PostNotFoundException;
 import org.example.util.mappers.PostMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Date;
@@ -49,7 +52,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = false)
     public void save(MultipartFile photoFile, PostDTO postDTO) throws IOException {
         String fileLocation = multipartService.savePhoto(photoFile);
         postDTO.setDatePublish(new Date());
@@ -77,5 +80,19 @@ public class PostServiceImpl implements PostService {
                         HttpHeaders.CONTENT_DISPOSITION,
                         "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
+    }
+
+    @Transactional
+    public HttpEntity<String> addPost(MultipartFile photoFile, PostDTO postDTO, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            String errorMsg = ErrorMessage.createErrorMessage(bindingResult);
+            throw new PostNotCreatedException(errorMsg);
+        }
+        try {
+            save(photoFile, postDTO);
+            return new ResponseEntity<>("Post saved", HttpStatus.OK);
+        } catch(IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

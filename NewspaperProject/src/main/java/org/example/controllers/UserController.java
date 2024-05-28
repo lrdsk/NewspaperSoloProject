@@ -16,23 +16,11 @@ import java.util.Set;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserServiceImpl userService;
-    private final JWTUtil jwtUtil;
 
     @Autowired
-    public UserController(UserServiceImpl userService, JWTUtil jwtUtil) {
+    public UserController(UserServiceImpl userService) {
         this.userService = userService;
-        this.jwtUtil = jwtUtil;
     }
-
-    /*@GetMapping()
-    public List<UserDTO> index(){
-        return userService.findAll();
-    }*/
-/*
-    @GetMapping("/{id}")
-    public UserDTO getOne(@PathVariable("id") int userId){
-        return userService.findById(userId);
-    }*/
 
     @Operation(summary = "Get all user likes by his email")
     @GetMapping("/likes")
@@ -40,23 +28,7 @@ public class UserController {
     @ApiResponse(responseCode = "400", description = "Не отправлен header authorization Bearer token")
     @ApiResponse(responseCode = "403", description = "Valid jwt, but insufficient access rights")
     public Set<Integer> getLikes(@RequestHeader(name = "Authorization") String token){
-        String jwtToken = token.substring(7);
-        String email = jwtUtil.validateTokenAndRetrieveClaim(jwtToken);
-        if(email == null){
-            System.out.println("EMAIL IS NULL");
-            System.out.println("EMAIL IS NULL");
-            System.out.println("EMAIL IS NULL");
-        }
-        return userService.getSetPostLiked(email);
+        return userService.getSetPostLiked(token);
     }
-/*    @DeleteMapping("/{id}")
-    public HttpEntity<HttpStatus> deleteUser(@PathVariable("id") int id){
-        UserDTO userDTO = userService.findById(id);
-
-        if(userDTO != null)
-            userService.deleteById(id);
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }*/
 
 }

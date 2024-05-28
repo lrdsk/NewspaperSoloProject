@@ -62,23 +62,8 @@ public class PostController {
     }
 
     @GetMapping("/{id}/photo")
-    public ResponseEntity<Resource> getResourceFile(
-            @PathVariable("id") int id, HttpServletRequest request)
-            throws IOException {
-        PostDTO postDTO = postService.findOne(id);
-        Resource resource = multipartService.loadFileAsResource(postDTO.getPhoto());
-
-        String contentType;
-        contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        if (contentType == null) {
-            contentType = "application/octet-stream";
-        }
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(
-                        HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+    public ResponseEntity<Resource> getResourceFile(@PathVariable("id") int id, HttpServletRequest request) throws IOException {
+        return postService.getResourceFile(id,request);
     }
 
     @Operation(summary = "По id поста поставить лайк при авторизированном пользователе",

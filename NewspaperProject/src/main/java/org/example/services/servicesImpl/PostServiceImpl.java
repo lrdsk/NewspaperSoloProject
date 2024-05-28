@@ -6,11 +6,17 @@ import org.example.services.PostService;
 import org.example.util.exceptions.PostNotFoundException;
 import org.example.util.mappers.PostMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,5 +60,22 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deleteOne(int id) {
         postRepository.deleteById(id);
+    }
+
+    public ResponseEntity<Resource> getResourceFile(int id, HttpServletRequest request) throws IOException {
+        PostDTO postDTO = findOne(id);
+        Resource resource = multipartService.loadFileAsResource(postDTO.getPhoto());
+
+        String contentType;
+        contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 }

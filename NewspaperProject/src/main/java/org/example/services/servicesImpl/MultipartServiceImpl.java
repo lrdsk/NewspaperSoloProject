@@ -22,6 +22,7 @@ public class MultipartServiceImpl {
     @Transactional
     public String savePhoto(MultipartFile file) throws IOException {
         File uploadDir = new File(filesLocation.toAbsolutePath().toString());
+        System.out.println(uploadDir);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm");
         String curDate = LocalDateTime.now().format(formatter);

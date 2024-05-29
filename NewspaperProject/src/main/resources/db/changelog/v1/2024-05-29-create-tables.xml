@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="postgres">
+
+        <createTable tableName="post">
+            <column name="post_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="information" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_publish" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="photo" type="text"/>
+        </createTable>
+
+        <createTable tableName="users">
+            <column name="user_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="surname" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="varchar(255)">
+            </column>
+        </createTable>
+
+        <createTable tableName="comments">
+            <column name="comment_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="info" type="varchar(1000)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_publish" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="int">
+                <constraints foreignKeyName="fk_comments_users" references="users(user_id)" deleteCascade="true"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="likes">
+            <column name="post_id" type="int">
+                <constraints foreignKeyName="fk_likes_post" references="post(post_id)" deleteCascade="true"/>
+            </column>
+            <column name="user_id" type="int">
+                <constraints foreignKeyName="fk_likes_users" references="users(user_id)" deleteCascade="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="likes" columnNames="post_id,user_id" constraintName="primary_key_likes"/>
+    </changeSet>
+
+</databaseChangeLog>

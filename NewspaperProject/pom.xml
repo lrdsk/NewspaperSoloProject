@@ -97,12 +97,11 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!--<dependency>
+		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
 			<version>3.10.3</version>
 		</dependency>
--->
 	</dependencies>
 
 	<build>

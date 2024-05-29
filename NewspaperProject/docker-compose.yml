@@ -14,7 +14,13 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db:5432/newspaper
       - spring.datasource.username=postgres
       - spring.datasource.password=postgres
-      - spring.jpa.hibernate.ddl-auto=update
+      - spring.liquibase.enabled=true
+      - spring.liquibase.drop-first=false
+      - spring.liquibase.change-log=classpath:db/changelog/db.changelog-master.yaml
+      - spring.liquibase.default-schema=public
+    volumes:
+      - ./src/main/resources/templates:/app/src/main/resources/templates
+
 
 
   service-db:

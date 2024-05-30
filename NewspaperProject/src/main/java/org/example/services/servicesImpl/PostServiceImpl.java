@@ -1,12 +1,15 @@
 package org.example.services.servicesImpl;
 
 import org.example.dto.PostDTO;
+import org.example.models.Post;
 import org.example.repositories.PostRepository;
+import org.example.security.JWTUtil;
 import org.example.services.PostService;
 import org.example.util.errorResponses.ErrorMessage;
 import org.example.util.exceptions.PostNotCreatedException;
 import org.example.util.exceptions.PostNotFoundException;
 import org.example.util.mappers.PostMapper;
+import org.example.util.mappers.TopicMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -30,17 +33,29 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
     private final MultipartServiceImpl multipartService;
+    private final TopicMapper topicMapper;
+    private final JWTUtil jwtUtil;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, MultipartServiceImpl multipartService) {
+    public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, MultipartServiceImpl multipartService, TopicMapper topicMapper, JWTUtil jwtUtil) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
         this.multipartService = multipartService;
+        this.topicMapper = topicMapper;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
     public List<PostDTO> findAll() {
         return postRepository.findAll().stream().map(postMapper::toDto).collect(Collectors.toList());
+    }
+
+    public List<PostDTO> findByUserFavorites(String token){
+        String jwtToken = token.substring(7);
+        String email = jwtUtil.validateTokenAndRetrieveClaim(jwtToken);
+
+        List<PostDTO> postDTOS = postRepository.findAll().stream().map(postMapper::toDto).collect(Collectors.toList());
+        return null;
     }
 
     public List<PostDTO> findAllByDateDesc(){
@@ -54,10 +69,13 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = false)
     public void save(MultipartFile photoFile, PostDTO postDTO) throws IOException {
+
         String fileLocation = multipartService.savePhoto(photoFile);
         postDTO.setDatePublish(new Date());
         postDTO.setPhoto(fileLocation);
-        postRepository.save(postMapper.toEntity(postDTO));
+        Post post = postMapper.toEntity(postDTO);
+        post.setPostTopicsList(postDTO.getTopicDTOList().stream().map(topicMapper::toEntity).collect(Collectors.toList()));
+        postRepository.save(post);
     }
 
     @Override

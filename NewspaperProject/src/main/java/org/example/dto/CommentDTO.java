@@ -36,5 +36,4 @@ public class CommentDTO {
 
     @JsonIgnore
     private Integer postId;
-
 }

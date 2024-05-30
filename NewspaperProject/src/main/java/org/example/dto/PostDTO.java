@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -30,4 +31,6 @@ public class PostDTO {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date datePublish;
+
+    private List<TopicDTO> topicDTOList;
 }

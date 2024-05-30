@@ -2,14 +2,16 @@ package org.example.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.example.dto.TopicDTO;
 import org.example.security.JWTUtil;
 import org.example.services.servicesImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -29,6 +31,20 @@ public class UserController {
     @ApiResponse(responseCode = "403", description = "Valid jwt, but insufficient access rights")
     public Set<Integer> getLikes(@RequestHeader(name = "Authorization") String token){
         return userService.getSetPostLiked(token);
+    }
+
+    @PostMapping("/favorite_topic")
+    public HttpEntity<HttpStatus> setFavoriteTopics(@RequestHeader(name = "Authorization") String token,
+                                                    @RequestBody List<TopicDTO> topicDTO){
+        userService.setSelectedTopics(topicDTO, token);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PostMapping("/banned_topic")
+    public HttpEntity<HttpStatus> setBannedTopics(@RequestHeader(name = "Authorization") String token,
+                                                  @RequestBody List<TopicDTO> topicDTO){
+        userService.setBannedTopics(topicDTO, token);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
 }

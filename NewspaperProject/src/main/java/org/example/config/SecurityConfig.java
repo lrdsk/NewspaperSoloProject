@@ -49,7 +49,7 @@ public class SecurityConfig{
                 .antMatchers(HttpMethod.POST, "/api/post").hasAnyRole("ADMIN")
                 .antMatchers( "/api/auth/registration", "/api/auth/login", "/api/post/**/like/count", "/api/post/**/comments").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/post/**").authenticated()
-                .antMatchers("/api/post/**/like", "api/users/likes").authenticated()
+                .antMatchers("/api/post/**/like", "api/users/**").authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

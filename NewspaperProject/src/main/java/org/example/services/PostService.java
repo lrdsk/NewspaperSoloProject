@@ -10,6 +10,8 @@ public interface PostService {
     List<PostDTO> findAll();
     PostDTO findOne(int id);
     void save(MultipartFile multipartFile, PostDTO postDTO) throws IOException;
-
     void deleteOne(int id);
+    List<PostDTO> findALlWithoutBanned(String token);
+    List<PostDTO> findAllByDateDesc();
+    List<PostDTO> findAllByUserFavorites(String token);
 }

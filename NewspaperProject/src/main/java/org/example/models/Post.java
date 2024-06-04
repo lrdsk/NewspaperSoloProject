@@ -47,7 +47,7 @@ public class Post {
     )
     private Set<User> users;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany/*(cascade = {CascadeType.PERSIST})*/
     @JoinTable(
             name="post_topic",
             joinColumns = @JoinColumn(name="post_id"),

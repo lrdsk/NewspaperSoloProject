@@ -7,6 +7,7 @@ import org.example.util.mappers.PostMapper;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class PostMapperTests {
@@ -17,7 +18,7 @@ public class PostMapperTests {
 
     @Test
     public void testToEntity() {
-        PostDTO postDTO = new PostDTO(1, "sample_photo.jpg", "Test Title", "Testing Information", new Date());
+        PostDTO postDTO = new PostDTO(1, "sample_photo.jpg", "Test Title", "Testing Information", new Date(), new ArrayList<>());
 
         Post post = postMapper.toEntity(postDTO);
 

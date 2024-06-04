@@ -33,17 +33,19 @@ public class UserController {
         return userService.getSetPostLiked(token);
     }
 
+    @Operation(summary = "Добавить пользователю любимую тему, можно отправлять только уже существующие")
     @PostMapping("/favorite_topic")
     public HttpEntity<HttpStatus> setFavoriteTopics(@RequestHeader(name = "Authorization") String token,
                                                     @RequestBody List<TopicDTO> topicDTO){
-        userService.setSelectedTopics(topicDTO, token);
+        userService.setSelectedTopics(topicDTO, token, 1);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
+    @Operation(summary = "Добавить пользователю заблокированную тему, можно отправлять только уже существующие")
     @PostMapping("/banned_topic")
     public HttpEntity<HttpStatus> setBannedTopics(@RequestHeader(name = "Authorization") String token,
                                                   @RequestBody List<TopicDTO> topicDTO){
-        userService.setBannedTopics(topicDTO, token);
+        userService.setSelectedTopics(topicDTO, token, 2);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

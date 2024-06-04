@@ -1,5 +1,6 @@
 package org.example.services;
 
+import org.example.dto.TopicDTO;
 import org.example.dto.UserDTO;
 
 import java.util.List;
@@ -12,4 +13,5 @@ public interface UserService {
     void deleteById(int id);
     Optional<UserDTO> findByEmail(String email);
     Set<Integer> getSetPostLiked(String email);
+    void setSelectedTopics(List<TopicDTO> topicsDTO, String token, int status);
 }

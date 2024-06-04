@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.dto.CommentDTO;
 import org.example.dto.PostDTO;
+import org.example.models.Post;
 import org.example.security.CustomUserDetails;
 import org.example.security.JWTUtil;
 import org.example.services.servicesImpl.CommentServiceImpl;
@@ -49,6 +50,19 @@ public class PostController {
         return postService.findAllByDateDesc();
     }
 
+
+    @Operation(summary = "Получить все посты в виде списка, кроме тех, которые отмечены заблокированными")
+    @GetMapping("/index")
+    public List<PostDTO> indexWithoutBanned(@RequestHeader(name = "Authorization") String token){
+        return postService.findALlWithoutBanned(token);
+    }
+
+    @Operation(summary = "Получить все посты в виде списка, которые отмечены любимыми (в порядке, чем больше в посте тем, отмеченных любимыми, тем первее стоит пост)")
+    @GetMapping("/favorites")
+    public List<PostDTO> indexFavoritesPosts(@RequestHeader(name = "Authorization") String token){
+        return postService.findAllByUserFavorites(token);
+    }
+
     @Operation(summary = "Получить пост по заданному id")
     @GetMapping("/{id}")
     public PostDTO getOne(@PathVariable("id") int id)
@@ -78,7 +92,7 @@ public class PostController {
         return likeService.getCountLikes(postId);
     }
 
-    @Operation(summary = "Добавить новый пост ",
+    @Operation(summary = "Добавить новый пост, а так же темы, которые ему соответствуют ",
             description = "Может только человек с ролью админ")
     @PostMapping()
     @PreAuthorize("ADMIN")
@@ -108,4 +122,5 @@ public class PostController {
     public List<CommentDTO> indexComments(@PathVariable("postId") int postId){
         return commentService.findAllByPostId(postId);
     }
+
 }

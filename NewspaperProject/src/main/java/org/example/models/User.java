@@ -1,5 +1,6 @@
 package org.example.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -42,27 +43,13 @@ public class User {
     private String password;
 
     @ManyToMany(mappedBy = "users", cascade = {CascadeType.MERGE})
-    private Set<Post> posts;
+    private List<Post> posts;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(
-            name="user_selected_topics",
-            joinColumns = @JoinColumn(name="user_id"),
-            inverseJoinColumns = @JoinColumn(name="topic_id")
-    )
-    private List<Topic> topics;
-
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(
-            name="user_banned_topics",
-            joinColumns = @JoinColumn(name="user_id"),
-            inverseJoinColumns = @JoinColumn(name="topic_id")
-    )
-    private List<Topic> bannedTopics;
-
+    @OneToMany(mappedBy = "user")
+    private Set<UserSelectedTopic> selectedTopics;
 
     @Column(name = "role")
     private String role;
@@ -78,5 +65,19 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hash(userId, name, surname, email, password);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", posts=" + posts +
+                ", comments=" + comments +
+                ", role='" + role + '\'' +
+                '}';
     }
 }

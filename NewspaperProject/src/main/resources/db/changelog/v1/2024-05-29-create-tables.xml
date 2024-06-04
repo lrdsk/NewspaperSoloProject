@@ -66,6 +66,37 @@
             </column>
         </createTable>
         <addPrimaryKey tableName="likes" columnNames="post_id,user_id" constraintName="primary_key_likes"/>
+
+        <createTable tableName="topic">
+            <column name="topic_id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="post_topic">
+            <column name="post_id" type="int">
+                <constraints foreignKeyName="fk_post_topic_post_id" references="post(post_id)" deleteCascade="true"/>
+            </column>
+            <column name="topic_id" type="int">
+                <constraints foreignKeyName="fk_post_topic_topic_id" references="topic(topic_id)" deleteCascade="true"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="post_topic" columnNames="post_id,topic_id" constraintName="primary_key_post_topic"/>
+
+        <createTable tableName="user_selected_topic">
+            <column name="user_id" type="int">
+                <constraints foreignKeyName="fk_user_selected_topic_user_id" references="users(user_id)" deleteCascade="true"/>
+            </column>
+            <column name="topic_id" type="int">
+                <constraints foreignKeyName="fk_user_selected_topic_topic_id" references="topic(topic_id)" deleteCascade="true"/>
+            </column>
+            <column name="status" type="int">
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="user_selected_topic" columnNames="user_id,topic_id" constraintName="primary_key_user_selected_topic"/>
     </changeSet>
 
 </databaseChangeLog>

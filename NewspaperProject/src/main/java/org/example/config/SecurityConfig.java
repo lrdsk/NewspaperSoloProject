@@ -50,6 +50,7 @@ public class SecurityConfig{
                 .antMatchers( "/api/auth/registration", "/api/auth/login", "/api/post/**/like/count", "/api/post/**/comments").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/post/**").authenticated()
                 .antMatchers("/api/post/**/like", "api/users/**").authenticated()
+                .antMatchers("/api/post/index", "/api/post/favorites").authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

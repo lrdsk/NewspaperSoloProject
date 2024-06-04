@@ -32,5 +32,6 @@ public class PostDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date datePublish;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<TopicDTO> topicDTOList;
 }

@@ -1,13 +1,19 @@
 package org.example.services.servicesImpl;
 
 import org.example.dto.PostDTO;
+import org.example.dto.TopicDTO;
 import org.example.models.Post;
+import org.example.models.Topic;
+import org.example.models.User;
+import org.example.models.UserSelectedTopic;
 import org.example.repositories.PostRepository;
+import org.example.repositories.UserRepository;
 import org.example.security.JWTUtil;
 import org.example.services.PostService;
 import org.example.util.errorResponses.ErrorMessage;
 import org.example.util.exceptions.PostNotCreatedException;
 import org.example.util.exceptions.PostNotFoundException;
+import org.example.util.exceptions.UserNotFoundException;
 import org.example.util.mappers.PostMapper;
 import org.example.util.mappers.TopicMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,16 +38,18 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
     private final MultipartServiceImpl multipartService;
-    private final TopicMapper topicMapper;
+    private final TopicServiceImpl topicService;
     private final JWTUtil jwtUtil;
+    private final UserRepository userRepository;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, MultipartServiceImpl multipartService, TopicMapper topicMapper, JWTUtil jwtUtil) {
+    public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, MultipartServiceImpl multipartService, TopicServiceImpl topicService, JWTUtil jwtUtil, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
         this.multipartService = multipartService;
-        this.topicMapper = topicMapper;
+        this.topicService = topicService;
         this.jwtUtil = jwtUtil;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -50,17 +57,31 @@ public class PostServiceImpl implements PostService {
         return postRepository.findAll().stream().map(postMapper::toDto).collect(Collectors.toList());
     }
 
-    public List<PostDTO> findByUserFavorites(String token){
+    @Override
+    public List<PostDTO> findALlWithoutBanned(String token){
         String jwtToken = token.substring(7);
         String email = jwtUtil.validateTokenAndRetrieveClaim(jwtToken);
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
-        List<PostDTO> postDTOS = postRepository.findAll().stream().map(postMapper::toDto).collect(Collectors.toList());
-        return null;
+        return postRepository.findAllPostsExceptSelectedTopics(user.getUserId()).stream().map(postMapper::toDto).collect(Collectors.toList());
     }
 
+    @Override
     public List<PostDTO> findAllByDateDesc(){
         return postRepository.findAllByDateDesc().stream().map(postMapper::toDto).collect(Collectors.toList());
     }
+
+    @Override
+    public List<PostDTO> findAllByUserFavorites(String token){
+        String jwtToken = token.substring(7);
+        String email = jwtUtil.validateTokenAndRetrieveClaim(jwtToken);
+        User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+
+        List<Post> posts = postRepository.findPostsByUserId(user.getUserId());
+        return posts.stream().map(postMapper::toDto).collect(Collectors.toList());
+    }
+
+
     @Override
     public PostDTO findOne(int id) {
         return postMapper.toDto(postRepository.findById(id).orElseThrow(PostNotFoundException::new));
@@ -74,8 +95,25 @@ public class PostServiceImpl implements PostService {
         postDTO.setDatePublish(new Date());
         postDTO.setPhoto(fileLocation);
         Post post = postMapper.toEntity(postDTO);
-        post.setPostTopicsList(postDTO.getTopicDTOList().stream().map(topicMapper::toEntity).collect(Collectors.toList()));
+        List<TopicDTO> topicDTOS = postDTO.getTopicDTOList();
+        List<Topic> topics = new ArrayList<>();
+
+        for (TopicDTO topicDTO : topicDTOS) {
+            Topic currTopic = topicService.findByName(topicDTO.getName());
+            if (currTopic == null) {
+               topicService.save(topicDTO);
+                currTopic = topicService.findByName(topicDTO.getName());
+            }
+
+            if (!topics.contains(currTopic)) {
+                topics.add(currTopic);
+            }
+        }
+
+        post.setPostTopicsList(topics);
         postRepository.save(post);
+
+
     }
 
     @Override

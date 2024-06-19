@@ -55,6 +55,9 @@
             <column name="user_id" type="int">
                 <constraints foreignKeyName="fk_comments_users" references="users(user_id)" deleteCascade="true"/>
             </column>
+            <column name="post_id" type="int">
+                <constraints foreignKeyName="fk_comments_post" references="post(post_id)" deleteCascade="true"/>
+            </column>
         </createTable>
 
         <createTable tableName="likes">

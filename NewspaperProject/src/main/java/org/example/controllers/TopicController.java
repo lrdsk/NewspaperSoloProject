@@ -2,7 +2,6 @@ package org.example.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.example.dto.TopicDTO;
-import org.example.models.Topic;
 import org.example.services.servicesImpl.TopicServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

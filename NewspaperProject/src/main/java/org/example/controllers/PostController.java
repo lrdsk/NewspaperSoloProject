@@ -4,21 +4,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.dto.CommentDTO;
 import org.example.dto.PostDTO;
-import org.example.models.Post;
-import org.example.security.CustomUserDetails;
-import org.example.security.JWTUtil;
 import org.example.services.servicesImpl.CommentServiceImpl;
 import org.example.services.servicesImpl.LikeServiceImpl;
-import org.example.services.servicesImpl.MultipartServiceImpl;
 import org.example.services.servicesImpl.PostServiceImpl;
-import org.example.util.errorResponses.ErrorMessage;
-import org.example.util.exceptions.PostNotCreatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -113,7 +105,8 @@ public class PostController {
     @ApiResponse(responseCode = "500", description = "Invalid jwt-token to authorization")
     public HttpEntity<HttpStatus> addComment(@RequestHeader(name = "Authorization") String token, @PathVariable("postId") int postId,
                                              @RequestBody CommentDTO commentDTO, BindingResult bindingResult){
-       return commentService.addComment(token, postId, commentDTO, bindingResult);
+        CommentDTO commentWithEmail = commentService.setUserEmailToComment(token, postId, commentDTO, bindingResult);
+        return commentService.saveComment(commentWithEmail);
     }
 
 

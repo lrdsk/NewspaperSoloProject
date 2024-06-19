@@ -3,7 +3,6 @@ package org.example.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.example.dto.TopicDTO;
-import org.example.security.JWTUtil;
 import org.example.services.servicesImpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;

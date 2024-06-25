@@ -12,6 +12,9 @@
     <sql>
         INSERT INTO post (title, information, date_publish, photo) VALUES ('Animals', 'There are elephants in the zoo', '2024-05-30', 'attach_2024-05-30-11-27_images.jpeg');
     </sql>
+    <sql>
+        INSERT INTO comments (info, date_publish, user_id, post_id) VALUES ('Very cool story about zoo', '2024-06-25', 1, 1);
+    </sql>
 </changeSet>
 
 </databaseChangeLog>

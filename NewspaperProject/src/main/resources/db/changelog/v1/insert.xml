@@ -9,6 +9,9 @@
     <sql>
         INSERT INTO users (name, surname, email, password, role) VALUES ('test', 'test', 'test@mail.ru', '$2a$10$UN8N3/9EYUoW4yP8UDVIq.JQ2kN1uAQWpx4yoQjWfMqjQqcGVgDaa', 'ADMIN');
     </sql>
+    <sql>
+        INSERT INTO post (title, information, date_publish, photo) VALUES ('Animals', 'There are elephants in the zoo', '2024-05-30', 'attach_2024-05-30-11-27_images.jpeg');
+    </sql>
 </changeSet>
 
 </databaseChangeLog>

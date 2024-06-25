@@ -63,6 +63,7 @@ public class PostController {
 
     }
 
+    @Operation(summary = "Получить фото прикрепленное к посту по id поста")
     @GetMapping("/{id}/photo")
     public ResponseEntity<Resource> getResourceFile(@PathVariable("id") int id, HttpServletRequest request) throws IOException {
         return postService.getResourceFile(id,request);

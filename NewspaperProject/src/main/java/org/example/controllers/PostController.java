@@ -44,7 +44,7 @@ public class PostController {
 
 
     @Operation(summary = "Получить все посты в виде списка, кроме тех, которые отмечены заблокированными")
-    @GetMapping("/index")
+    @GetMapping("/no_banned")
     public List<PostDTO> indexWithoutBanned(@RequestHeader(name = "Authorization") String token){
         return postService.findALlWithoutBanned(token);
     }

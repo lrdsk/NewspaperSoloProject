@@ -10,7 +10,45 @@
         INSERT INTO users (name, surname, email, password, role) VALUES ('test', 'test', 'test@mail.ru', '$2a$10$UN8N3/9EYUoW4yP8UDVIq.JQ2kN1uAQWpx4yoQjWfMqjQqcGVgDaa', 'ADMIN');
     </sql>
     <sql>
-        INSERT INTO post (title, information, date_publish, photo) VALUES ('Animals', 'There are elephants in the zoo', '2024-05-30', 'attach_2024-05-30-11-27_images.jpeg');
+        INSERT INTO post (title, information, date_publish, photo) VALUES
+        ('Animals', 'There are elephants in the zoo', '2024-05-30', 'attach_2024-05-30-11-27_images.jpeg'),
+        ('History', 'History of Russia', '2024-06-27', 'attach_2024-06-27-11-00_images.jpeg'),
+        ('Cats', 'Cats on the street', '2024-06-24', 'attach_2024-06-24-11-22_images.jpeg'),
+        ('News', 'Some news', '2024-06-21', 'attach_2024-06-21-12-32_images.jpeg'),
+        ('Coding', 'code in java', '2024-06-19', 'attach_2024-06-21-14-42_images.jpeg');
+    </sql>
+
+    <sql>
+        INSERT INTO topic (name) VALUES
+        ('Animals'),
+        ('Histories'),
+        ('News'),
+        ('Code'),
+        ('Cats');
+    </sql>
+
+    <sql>
+        INSERT INTO post_topic (post_id, topic_id) VALUES
+        (1,1),
+        (2,2),
+        (3,1),
+        (4,3),
+        (5,4),
+        (3,5);
+    </sql>
+
+    <sql>
+        INSERT INTO user_selected_topic (user_id, topic_id, status) VALUES
+        (1, 1, 1),
+        (1, 2, 1),
+        (1, 3, 2),
+        (1, 5, 1);
+    </sql>
+
+    <sql>
+        INSERT INTO likes (post_id, user_id) VALUES
+        (1, 1),
+        (5, 1);
     </sql>
     <sql>
         INSERT INTO comments (info, date_publish, user_id, post_id) VALUES ('Very cool story about zoo', '2024-06-25', 1, 1);
